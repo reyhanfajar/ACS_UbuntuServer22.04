@@ -2,6 +2,7 @@
 ## Instalasi Apache Cloudstack 4.17 pada Ubuntu Server 22.0.4 LTS
 Oleh Kelompok 4: Reyhan Fajar Pamenang 2006577, Rifqi Hari Putranto 1906577, Syamsul Erisandy Arief 2006577611
 Link Panduan Youtube: https://www.youtube.com/watch?v=86e4bFxHuig
+
 Untuk konfigurasi ini menggunakan username: kelompok4cc dan alamat IP 192.168.10.44
 
 ## Perintah konfigurasi pada Ubuntu Server
@@ -18,7 +19,7 @@ ifconfig
 ```
 ## Pada Client, buka cmd, lalu masukkan perintah:
 ```
-win: buka cmd - ssh kelompok4cc@inet ens33 yes
+ssh kelompok4cc@[Alamat Jaringan yang digunakan]
 ```
 ## Lalu ketik yes, setelah itu Client akan terhubung ke Ubuntu Server. Dari sini, konfigurasi dapat dilanjutkan.
 ```
@@ -53,7 +54,7 @@ reboot
 ```
 ## Pada Client, login ulang melalui SSH seperti pada langkah sebelumnya, namun menggunakan alamat IP cloudbr0
 ```
-winssh login ssh kelompok4cc@192.168.10.44
+ssh login ssh kelompok4cc@192.168.10.44
 sudo su
 pass
 ```
