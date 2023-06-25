@@ -84,6 +84,7 @@ binlog-format = 'ROW'
 systemctl restart mysql
 cloudstack-setup-databases kelompok4cc:kelompok4cc@192.168.10.44 --deploy-as=kelompok4cc:[PASSWORD USER] -i 192.168.10.44
 ```
+bila terjadi error, biasanya terjadi karena password tidak memenuhi syarat dari mysql policy, yang bisa diatasi dengan membuka mysql di serve, lalu set policy = LOW dengan _SET GLOBAL validate_password.policy = LOW;_
 ```
 apt-get install nfs-kernel-server quota
 echo "/export  *(rw,async,no_root_squash,no_subtree_check)" > /etc/exports
