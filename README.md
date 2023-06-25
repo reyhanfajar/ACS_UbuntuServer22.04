@@ -112,7 +112,7 @@ apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd
 apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper
 cloudstack-setup-management
 ```
-## Setelah ini, cloudstack sudah dapat diakses melalui alamat 192.168.10.44:8080/client. Untuk setup instance bisa dilakukan dengan mengikuti perintah berikut:
+Setelah ini, cloudstack sudah dapat diakses melalui alamat 192.168.10.44:8080/client. Untuk setup bisa dilakukan dengan mengikuti perintah berikut:
 ## Zone
 ```
 Name - Zone1
@@ -163,3 +163,4 @@ Name - Secondary
 Server - 192.168.10.44
 Path - /export/secondary
 ```
+## Setelah itu, penerapan Instance dapat dilakukan melalui menu Instances, dan mengikuti petunjuk yang ada.
