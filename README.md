@@ -40,7 +40,6 @@ reboot
 winssh login ssh kelompok4cc@192.168.10.44
 sudo su
 pass
----------------------------------------------------------------------------------------------------------
 Cloudstack Installation
 mkdir -p /etc/apt/keyrings
 wget -O- ...
