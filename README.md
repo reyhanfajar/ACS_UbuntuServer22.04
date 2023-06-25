@@ -90,21 +90,76 @@ sed -i -e 's/^STATDOPTS=$/STATDOPTS="--port 662 --outgoing-port 2020"/g' /etc/de
 echo "NEED_STATD=yes" >> /etc/default/nfs-common
 sed -i -e 's/^RPCRQUOTADOPTS=$/RPCRQUOTADOPTS="-p 875"/g' /etc/default/quota
 service nfs-kernel-server restart
-
-sed -i libvirtd_opts="-l"
+apt-get install qemu-kvm cloudstack-agent
+sed -i -e 's/\#vnc_listen.*$/vnc_listen = "0.0.0.0"/g' /etc/libvirt/qemu.conf
+```
+## Pada /etc/default/libvirtd, tambahkan 
+```
+LIBVIRTD_ARGS="--listen" to /etc/default/libvirtd
+```
+```
 UUID=$(uuid)
 echo host_uuid = ...
-nano /etc/libvirt/libvirtd.conf
-cek host_uuid
+echo 'listen_tls=0' >> /etc/libvirt/libvirtd.conf
+echo 'listen_tcp=1' >> /etc/libvirt/libvirtd.conf
+echo 'tcp_port = "16509"' >> /etc/libvirt/libvirtd.conf
+echo 'mdns_adv = 0' >> /etc/libvirt/libvirtd.conf
+echo 'auth_tcp = "none"' >> /etc/libvirt/libvirtd.conf
 systemctl restart libvirtd
-conf echoes selain tls mask selain tls
-conf docker
-gen id
-firewall optional
-yes
-disable apparmour
-launch server
-setups: zone, network, pod, guest traffic, cluster, host, prim/secstorage
-XRDP apts
-tcp conf
+ln -s /etc/apparmor.d/usr.sbin.libvirtd /etc/apparmor.d/disable/
+ln -s /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper /etc/apparmor.d/disable/
+apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd
+apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper
+cloudstack-setup-management
+```
+## Setelah ini, cloudstack sudah dapat diakses melalui alamat 192.168.10.44:8080/client. Untuk setup instance bisa dilakukan dengan mengikuti perintah berikut:
+## Zone
+```
+Name - Zone1
+Public DNS 1 - 8.8.8.8
+Internal DNS1 - [gateway router]
+Hypervisor - KVM
+```
+## Network
+```
+Gateway - 192.168.10.1
+Netmask - 255.255.255.0
+Start IP - 192.168.10.20
+End IP - 192.168.10.50
+```
+## Pod
+```
+Name - Pod1
+Gateway - 192.168.10.1
+Start/end reserved system IPs - 192.168.10.55 - 192.168.10.90
+```
+## Guest Traffic
+```
+VLAN/VNI range: 700-900
+```
+## Cluster
+```
+Name - Cluster1
+Hypervisor - Choose KVM
+```
+## Host
+```
+Hostname - 192.168.10.44
+Username - komputasiawan
+Password - [PASWWORD USER]
+```
+### Primary Storage
+```
+Name - Primary
+Scope - Zone
+Protocol - NFS
+Server - 192.168.10.44
+Path - /export/primary
+```
+## Secondary Storage
+```
+Provider - NFS
+Name - Secondary
+Server - 192.168.10.44
+Path - /export/secondary
 ```
