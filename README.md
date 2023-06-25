@@ -1,23 +1,11 @@
 # ACS_UbuntuServer22.04
-ACS 4.17 on Ubuntu 22.04
-------------------------------------------------------------------------------------------------------------------
-Ubuntu Server Installation
-------------------------------------------------------------------------------------------------------------------
-buka vmware
-new vm
-typical
-select ubuntu server iso
-select storage save
-select storage space
-customize hardware - net nat gateway .2, cpu virtualization utk kvm
-finish setup
-configure vnets - nat vmnet1
-launch vm
-setup
-reboot
-login
-sudo su
-pass
+## Instalasi Apache Cloudstack 4.17 pada Ubuntu Server 22.0.4 LTS
+Oleh Kelompok 4: Reyhan Fajar Pamenang 2006577, Rifqi Hari Putranto 1906577, Syamsul Erisandy Arief 2006577611
+Link Panduan Youtube: https://www.youtube.com/watch?v=86e4bFxHuig
+Untuk konfigurasi ini menggunakan username: kelompok4cc dan alamat IP 192.168.10.44
+
+## Perintah konfigurasi pada Ubuntu Server
+```
 apt update
 apt-get update
 apt-get upgrade
@@ -27,31 +15,82 @@ duf
 apt install htop lynx net-tools bridge-utils uuid openntpd intel-microcode -y (htop taskman lynx browser)
 nano  /etc/ssh/sshd_config -> permitrootlogin yes
 ifconfig
+```
+## Pada Client, buka cmd, lalu masukkan perintah:
+```
 win: buka cmd - ssh kelompok4cc@inet ens33 yes
+```
+## Lalu ketik yes, setelah itu Client akan terhubung ke Ubuntu Server. Dari sini, konfigurasi dapat dilanjutkan.
+```
 sudo su
 pass 
 cd /etc/netplan
 nano 00-installer-config.yaml
-add cloudbr0 address 192.168.10.44 default = 0.0.0.0/0 via 192.168.10.2 karena nat vmware gatewaynya .2
+```
+## Pada konfigurasi netplan, tambahkan bridge cloudbr0 dengan alamat 192.168.10.44, -to: default = 0.0.0.0/0 via: 192.168.10.1 sesuai jaringan yang dimiliki
+```
+  bridges:
+    cloudbr0:
+      addresses: [192.168.10.44/24]
+      routes:
+       - to: 0.0.0.0/0
+         via: 192.168.10.2
+      nameservers:
+        addresses: [1.1.1.1, 8.8.8.8]
+      interfaces: [ens33]
+      dhcp4: false
+      dhcp6: false
+      parameters:
+        stp: false
+        forward-delay: 0
+```
+## Setelah itu, terapkan perubahan pada Netplan
+```
 cd /
 netplan generate
 netplan apply
 reboot
+```
+## Pada Client, login ulang melalui SSH seperti pada langkah sebelumnya, namun menggunakan alamat IP cloudbr0
+```
 winssh login ssh kelompok4cc@192.168.10.44
 sudo su
 pass
-Cloudstack Installation
+```
+## Konfigurasi Apache Cloudstack
+```
 mkdir -p /etc/apt/keyrings
 wget -O- ...
 echo deb
 apt
 apt-get update -y
 apt-get install cloudstack-management mysql-server -y
-conf database
-deploy
-storage setup
-configure nfs server
-setup kvm
+
+nano /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+```
+[mysqld]
+server-id = 1
+sql-mode="STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,ERROR_FOR_DIVISION_BY_ZERO,NO_ZERO_DATE,NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION"
+innodb_rollback_on_timeout=1
+innodb_lock_wait_timeout=600
+max_connections=1000
+log-bin=mysql-bin
+binlog-format = 'ROW'
+```
+```
+systemctl restart mysql
+cloudstack-setup-databases kelompok4cc:kelompok4cc@192.168.10.44 --deploy-as=kelompok4cc:[PASSWORD USER] -i 192.168.10.44
+apt-get install nfs-kernel-server quota
+echo "/export  *(rw,async,no_root_squash,no_subtree_check)" > /etc/exports
+mkdir -p /export/primary /export/secondary
+exportfs -a
+sed -i -e 's/^RPCMOUNTDOPTS="--manage-gids"$/RPCMOUNTDOPTS="-p 892 --manage-gids"/g' /etc/default/nfs-kernel-server
+sed -i -e 's/^STATDOPTS=$/STATDOPTS="--port 662 --outgoing-port 2020"/g' /etc/default/nfs-common
+echo "NEED_STATD=yes" >> /etc/default/nfs-common
+sed -i -e 's/^RPCRQUOTADOPTS=$/RPCRQUOTADOPTS="-p 875"/g' /etc/default/quota
+service nfs-kernel-server restart
+
 sed -i libvirtd_opts="-l"
 UUID=$(uuid)
 echo host_uuid = ...
@@ -68,7 +107,4 @@ launch server
 setups: zone, network, pod, guest traffic, cluster, host, prim/secstorage
 XRDP apts
 tcp conf
-
-
-
-
+```
