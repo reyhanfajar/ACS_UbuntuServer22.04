@@ -84,6 +84,7 @@ binlog-format = 'ROW'
 systemctl restart mysql
 cloudstack-setup-databases kelompok4cc:kelompok4cc@192.168.10.44 --deploy-as=kelompok4cc:[PASSWORD USER] -i 192.168.10.44
 ```
+```
 apt-get install nfs-kernel-server quota
 echo "/export  *(rw,async,no_root_squash,no_subtree_check)" > /etc/exports
 mkdir -p /export/primary /export/secondary
