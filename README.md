@@ -3,6 +3,7 @@
 Oleh Kelompok 4: Reyhan Fajar Pamenang 2006577486, Rifqi Hari Putranto 1806200192, Syamsul Erisandy Arief 2006577611
 
 Link Panduan Youtube: https://www.youtube.com/watch?v=86e4bFxHuig
+Link Percobaan Instalasi: https://www.youtube.com/watch?v=l9zwJB-O87g
 
 Untuk konfigurasi ini menggunakan username: kelompok4cc dan alamat IP 192.168.10.44
 
